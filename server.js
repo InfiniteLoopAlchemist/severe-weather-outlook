@@ -219,20 +219,22 @@ app.listen(PORT, () => {
 });
 
 // Schedule tasks
-cron.schedule('10 0,18 * * *', async() => {
-    await downloadThunderstormForecast();
-    console.log('Download Thunderstorm Forecast Task ran at 12 AM-6PM');
-});
+//cron.schedule('10 0,18 * * *', async() => {
+
+//});
 
 cron.schedule('*/15 * * * *', async() => {
+    await downloadThunderstormForecast();
+    console.log('Download Thunderstorm Forecast Task ran at 8:00 AM-PM');
     await downloadRegionalAlerts();
     console.log('Download Regional Alerts Runs every 30 minutes');
-});
-
-cron.schedule('10 2,8,14,20 * * *', async() => {
     await downloadNHCImages();
     console.log('NHC image download task ran');
 });
+
+//cron.schedule('10 2,8,14,20 * * *', async() => {
+
+//});
 
 // Run the initial download
 (async() => {
