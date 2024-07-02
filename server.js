@@ -49,6 +49,7 @@ const downloadImageWithRetry = async( page, evaluateFn, filePath, retries = 15 )
  */
 const downloadImageFromNHC = async( url, selector, filePath, retries = 15 ) => {
     const browser = await puppeteer.launch({
+        headless: true,
         args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
     });
     const page = await browser.newPage();
@@ -107,6 +108,7 @@ const downloadThunderstormForecast = async() => {
  */
 const downloadRegionalAlerts = async() => {
     const browser = await puppeteer.launch({
+        headless: true,
         args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
     });
     const page = await browser.newPage();
@@ -186,6 +188,25 @@ const downloadNHCImages = async() => {
     );
 };
 
+/**
+ * Downloads the latest full-sized hurricane cone image from the NHC website.
+ *
+ * @async
+ * @function downloadHurricaneConeImage
+ * @returns {Promise<void>} A promise that resolves once the image is downloaded.
+ */
+const downloadHurricaneConeImage = async() => {
+    const url = 'https://www.nhc.noaa.gov/refresh/graphics_at2+shtml/173539.shtml?cone#contents';
+    const selector = 'img#coneimage';
+    const filePath = path.join(__dirname, 'hurricane_cone_image.png');
+    
+    await downloadImageFromNHC(url, selector, filePath);
+};
+
+app.get('/hurricane-cone-image', ( req, res ) => {
+    res.sendFile(path.join(__dirname, 'hurricane_cone_image.png'));
+});
+
 app.get('/severe-storm-outlook', ( req, res ) => {
     res.sendFile(path.join(__dirname, 'thunderstorm_forecast.jpg'));
 });
@@ -219,26 +240,22 @@ app.listen(PORT, () => {
 });
 
 // Schedule tasks
-//cron.schedule('10 0,18 * * *', async() => {
-
-//});
-
 cron.schedule('*/15 * * * *', async() => {
     await downloadThunderstormForecast();
-    console.log('Download Thunderstorm Forecast Task ran at 8:00 AM-PM');
+    console.log('Download Thunderstorm Forecast task ran every 15 minutes');
     await downloadRegionalAlerts();
     console.log('Download Regional Alerts Runs every 30 minutes');
     await downloadNHCImages();
     console.log('NHC image download task ran');
+    await downloadHurricaneConeImage();
+    console.log('Hurricane cone image download task ran');
 });
-
-//cron.schedule('10 2,8,14,20 * * *', async() => {
-
-//});
 
 // Run the initial download
 (async() => {
     await downloadThunderstormForecast();
     await downloadRegionalAlerts();
     await downloadNHCImages();
+    await downloadHurricaneConeImage();
+    
 })();
