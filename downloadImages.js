@@ -17,9 +17,9 @@ const downloadImage = async( url, filePath ) => {
 
 const delay = ( time ) => new Promise(( resolve ) => setTimeout(resolve, time));
 
-const downloadImageWithRetry = async( page, evaluateFn, filePath, retries = 5 ) => {
+const downloadImageWithRetry = async( page, evaluateFn, filePath, selector, retries = 5 ) => {
     for ( let i = 0; i < retries; i++ ) {
-        const imageUrl = await page.evaluate(evaluateFn);
+        const imageUrl = await page.evaluate(evaluateFn, selector);
         if ( imageUrl ) {
             await downloadImage(imageUrl, filePath);
             return;

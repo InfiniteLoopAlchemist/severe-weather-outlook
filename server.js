@@ -5,10 +5,10 @@ const downloadThunderstormForecast = require('./downloadThunderstormForecast');
 const downloadRegionalAlerts = require('./downloadRegionalAlerts');
 const downloadNHCImages = require('./downloadNHCImages');
 const downloadHurricaneConeImage = require('./downloadHurricaneConeImage');
+const { downloadThunderstormOutlook, downloadDay1Outlook } = require('./downloadSPCImages');
 
 const app = express();
 const PORT = 3000; // Adjust the port as needed
-
 
 app.get('/hurricane-cone-image', ( req, res ) => {
     res.sendFile(path.join(__dirname, 'hurricane_cone_image.png'));
@@ -42,6 +42,14 @@ app.get('/pacific-7d', ( req, res ) => {
     res.sendFile(path.join(__dirname, 'two_cpac_7d0.png'));
 });
 
+app.get('/spc-thunderstorm-outlook', ( req, res ) => {
+    res.sendFile(path.join(__dirname, 'thunderstorm_outlook.gif'));
+});
+
+app.get('/spc-day1-outlook', ( req, res ) => {
+    res.sendFile(path.join(__dirname, 'day1_outlook.gif'));
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${ PORT }`);
 });
@@ -56,13 +64,18 @@ cron.schedule('*/15 * * * *', async() => {
     console.log('NHC image download task ran');
     await downloadHurricaneConeImage();
     console.log('Hurricane cone image download task ran');
+    await downloadThunderstormOutlook();
+    console.log('SPC Thunderstorm Outlook image download task ran');
+    await downloadDay1Outlook();
+    console.log('SPC Day 1 Outlook image download task ran');
 });
 
 // Run the initial download
 (async() => {
-    await downloadThunderstormForecast();
-    await downloadRegionalAlerts();
-    await downloadNHCImages();
-    await downloadHurricaneConeImage();
-    
+    //  await downloadThunderstormForecast();
+    // await downloadRegionalAlerts();
+    // await downloadNHCImages();
+    // await downloadHurricaneConeImage();
+    await downloadThunderstormOutlook();
+    await downloadDay1Outlook();
 })();
