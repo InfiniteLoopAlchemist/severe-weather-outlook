@@ -72,10 +72,11 @@ cron.schedule('*/15 * * * *', async() => {
 
 // Run the initial download
 (async() => {
+    await downloadThunderstormOutlook();
+    await downloadDay1Outlook();
     await downloadThunderstormForecast();
     await downloadRegionalAlerts();
     await downloadNHCImages();
     await downloadHurricaneConeImage();
-    await downloadThunderstormOutlook();
-    await downloadDay1Outlook();
+    
 })();

@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
-const { delay, downloadImageWithRetry } = require('./downloadImages');
+const { downloadImageWithRetry } = require('./downloadImages');
 
 /**
  * Downloads the thunderstorm outlook image from SPC website.
@@ -11,6 +11,7 @@ const { delay, downloadImageWithRetry } = require('./downloadImages');
  */
 const downloadThunderstormOutlook = async() => {
     const url = 'https://www.spc.noaa.gov/products/exper/enhtstm/';
+    const selector = 'img.shown';  // Adjusted selector to match the required image
     const filePath = path.join(__dirname, 'thunderstorm_outlook.gif');
     
     const browser = await puppeteer.launch({
@@ -25,12 +26,12 @@ const downloadThunderstormOutlook = async() => {
         
         await downloadImageWithRetry(
             page,
-            () => {
-                const img = Array.from(document.querySelectorAll('img'))
-                    .find(img => img.src.includes('enh_') && img.src.includes('2000'));
+            ( selector ) => {
+                const img = document.querySelector(selector);
                 return img ? img.src : null;
             },
-            filePath
+            filePath,
+            selector
         );
     } catch ( error ) {
         console.error(`Error downloading image from ${ url }:`, error);
