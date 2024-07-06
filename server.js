@@ -74,8 +74,8 @@ cron.schedule('*/15 * * * *', async() => {
 (async() => {
     await downloadThunderstormOutlook();
     await downloadDay1Outlook();
-    // await downloadThunderstormForecast();
-    // await downloadRegionalAlerts();
-    // await downloadNHCImages();
-    //await downloadHurricaneConeImage();
+    await downloadThunderstormForecast();
+    await downloadRegionalAlerts();
+    await downloadNHCImages();
+    await downloadHurricaneConeImage();
 })();

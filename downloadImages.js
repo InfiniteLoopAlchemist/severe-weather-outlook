@@ -18,20 +18,27 @@ const downloadImage = async( url, filePath ) => {
 };
 
 /**
- * Checks if the file at the given file path is a valid GIF.
+ * Checks if the file at the given file path is a valid image.
  *
  * @async
- * @function isValidGif
+ * @function isValidImage
  * @param {string} filePath - The file path of the image to check.
- * @returns {Promise<boolean>} - A Promise that resolves to a boolean indicating if the file is a valid GIF.
+ * @returns {Promise<boolean>} - A Promise that resolves to a boolean indicating if the file is a valid image.
  */
-const isValidGif = async( filePath ) => {
+const isValidImage = async( filePath ) => {
     const fileTypeFromBuffer = (await import('file-type')).fileTypeFromBuffer;
     const buffer = fs.readFileSync(filePath);
     const fileType = await fileTypeFromBuffer(buffer);
-    return fileType && fileType.ext === 'gif';
+    return fileType && fileType.mime.startsWith('image/');
 };
 
+/**
+ * Creates a delay for the specified amount of time.
+ *
+ * @function delay
+ * @param {number} time - The amount of time to delay in milliseconds.
+ * @returns {Promise<void>} - A Promise that resolves after the specified delay.
+ */
 const delay = ( time ) => new Promise(( resolve ) => setTimeout(resolve, time));
 
 const downloadImageWithRetry = async( page, evaluateFn, filePath, selector, retries = 20 ) => {
@@ -39,10 +46,10 @@ const downloadImageWithRetry = async( page, evaluateFn, filePath, selector, retr
         const imageUrl = await page.evaluate(evaluateFn, selector);
         if ( imageUrl ) {
             await downloadImage(imageUrl, filePath);
-            if ( await isValidGif(filePath) ) {
+            if ( await isValidImage(filePath) ) {
                 return;
             } else {
-                console.error(`Invalid GIF format. Retry ${ i + 1 }/${ retries }`);
+                console.error(`Invalid image format. Retry ${ i + 1 }/${ retries }`);
             }
         } else {
             console.error(`Failed to find image. Retry ${ i + 1 }/${ retries }`);
@@ -52,4 +59,4 @@ const downloadImageWithRetry = async( page, evaluateFn, filePath, selector, retr
     console.error(`Failed to download valid image after ${ retries } retries.`);
 };
 
-module.exports = { downloadImage, delay, downloadImageWithRetry, isValidGif };
+module.exports = { downloadImage, delay, downloadImageWithRetry, isValidImage };
