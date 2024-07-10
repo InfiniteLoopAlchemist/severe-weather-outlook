@@ -11,9 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.19.2",
-    "file-type": "^19.0.0",
+    "file-type": "^19.1.1",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
-    "puppeteer": "^22.11.1"
+    "puppeteer": "^22.12.1"
   }
 }
