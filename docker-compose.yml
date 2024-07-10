@@ -1,0 +1,13 @@
+services:
+  severe-weather-outlook:
+    build: .
+    container_name: severe-weather-outlook
+    environment:
+      - NODE_ENV=production
+    labels:
+      com.centurylinklabs.watchtower.enable: "false"
+    ports:
+      - "6050:3000"
+    volumes:
+      - /volume1/Hideout-Server/data/apps/severe-weather-outlook:/app
+    restart: unless-stopped
